@@ -56,7 +56,7 @@ def receive_mqtt(host, user_id, container_id, ser):
 
 
 def create_serial_client(device, rate):
-    ser = serial.Serial('/dev/ttys003', 9600)
+    ser = serial.Serial(device, rate)
     return ser
 
 
