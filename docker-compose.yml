@@ -1,0 +1,6 @@
+version: '3'
+services:
+  code:
+    devices:
+      - "/dev/tty02:/dev/tty02"
+    build: .
