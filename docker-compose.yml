@@ -2,5 +2,5 @@ version: '3'
 services:
   code:
     devices:
-      - "/dev/tty:/dev/tty02"
+      - "/dev/ttyS1:/dev/ttyS1"
     build: .
