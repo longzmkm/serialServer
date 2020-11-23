@@ -84,7 +84,7 @@ if __name__ == '__main__':
     # 获取MQTT 的数据
 
     host = '52.130.92.191'
-    device = '/dev/ttyS1'
+    device = '/dev/ttyS10'
     rate = 9600
 
     client = mqtt.Client(client_id=generate_number())
