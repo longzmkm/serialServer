@@ -47,9 +47,10 @@ def mqtt_to_serial(client, userdata, message):
 
 @async_call
 def receive_mqtt(host, user_id, container_id, ser):
-    logger.debug("{user_id}/{container_id}/+/up".format(user_id=user_id, container_id=container_id))
+    topic = "{user_id}/{container_id}/+/up".format(user_id=user_id, container_id=container_id)
+    logger.debug(topic)
     subscribe.callback(mqtt_to_serial,
-                       '2/c556e7e3ccb4/ssssss/up',
+                       topic,
                        hostname=host, port=1883,
                        userdata=ser,
                        client_id=generate_number(),
