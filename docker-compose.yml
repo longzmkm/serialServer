@@ -1,6 +1,6 @@
 version: '3'
 services:
   code:
-    devices:
-      - "/dev/ttyS10:/dev/ttyS10"
+    volumes:
+      - /dev/ttyS10:/dev/ttyS11
     build: .
