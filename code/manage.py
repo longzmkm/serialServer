@@ -1,3 +1,4 @@
+import os
 import serial
 import random
 import string
@@ -62,8 +63,8 @@ def create_serial_client(device, rate):
 
 def get_evn():
     # 获取 环境变量数据
-    user_id = '2'
-    container_id = 'c556e7e3ccb4'
+    user_id = os.environ.get('userid')
+    container_id = os.environ.get('container')
 
     return user_id, container_id
 
@@ -93,7 +94,7 @@ if __name__ == '__main__':
     # 1. 获取环境变量  组成topic
     logger.debug('1.组成topic')
     user_id, container_id = get_evn()
-
+    logger.debug(u'当前USE_ID:%s, 容器ID:%s' % (user_id, container_id))
     # 2. 创建串口的 master 和 slave
     logger.debug('2.创建串口的连接')
     ser = create_serial_client(device, rate)
