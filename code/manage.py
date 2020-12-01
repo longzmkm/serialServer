@@ -73,7 +73,7 @@ def get_evn():
 
 @async_call
 def read_tty(ser, client, user_id, container_id):
-    topic = '{user_id}/{container_id}/+/down'.format(user_id=user_id, container_id=container_id)
+    topic = '{user_id}/{container_id}/serial/down'.format(user_id=user_id, container_id=container_id)
 
     while True:
         if is_rece and ser.in_waiting != 0:
