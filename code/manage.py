@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(filename)s[line:%
                     datefmt='%a, %d %b %Y %H:%M:%S')
 logger = logging.getLogger(__name__)
 
-is_rece = False
+is_rece = True
 
 
 def async_call(fn):
@@ -73,7 +73,7 @@ def get_evn():
 
 
 @async_call
-def read_tty(ser, client, user_id, container_id):
+def read_tty(host, user_id, container_id, ser):
     global is_rece
     topic = '{user_id}/{container_id}/serial/down'.format(user_id=user_id, container_id=container_id)
 
@@ -81,7 +81,10 @@ def read_tty(ser, client, user_id, container_id):
         if is_rece and ser.in_waiting != 0:
             msg_recv = binascii.hexlify(ser.read(ser.in_waiting)).decode('utf-8')
             logger.debug('recv the data:%s' % msg_recv)
+            client = mqtt.Client(client_id=generate_number())
+            client.connect(host=host, port=1883)
             client.publish(topic=topic, payload=msg_recv)
+            client.disconnect()
             logger.debug('send data to mqtt topic:%s , payload:%s' % (topic, msg_recv))
 
 
@@ -91,9 +94,6 @@ if __name__ == '__main__':
     host = '52.130.92.191'
     device = '/dev/ttyS10'
     rate = 9600
-
-    client = mqtt.Client(client_id=generate_number())
-    client.connect(host=host, port=1883, keepalive=60)
 
     # 1. 获取环境变量  组成topic
     logger.debug('1.组成topic')
@@ -108,4 +108,4 @@ if __name__ == '__main__':
     receive_mqtt(host, user_id, container_id, ser)
 
     # 4. 接收串口发送的数据 写入 topic
-    read_tty(ser, client, user_id, container_id)
+    read_tty(host, user_id, container_id, ser)
