@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(filename)s[line:%
                     datefmt='%a, %d %b %Y %H:%M:%S')
 logger = logging.getLogger(__name__)
 
-is_rece = True
+is_rece = False
 
 
 def async_call(fn):
@@ -28,6 +28,7 @@ def generate_number():
 
 
 def Vpsend(ser, message):
+    global is_rece
     try:
         is_rece = False
         ser.write(bytearray.fromhex(message))
@@ -73,13 +74,14 @@ def get_evn():
 
 @async_call
 def read_tty(ser, client, user_id, container_id):
+    global is_rece
     topic = '{user_id}/{container_id}/serial/down'.format(user_id=user_id, container_id=container_id)
 
     while True:
         if is_rece and ser.in_waiting != 0:
             msg_recv = binascii.hexlify(ser.read(ser.in_waiting)).decode('utf-8')
             logger.debug('recv the data:%s' % msg_recv)
-            client.publish(topic=topic, payload=msg_recv, qos=1)
+            client.publish(topic=topic, payload=msg_recv)
             logger.debug('send data to mqtt topic:%s , payload:%s' % (topic, msg_recv))
 
 
