@@ -68,11 +68,11 @@ def get_evn():
     # 获取 环境变量数据
     user_id = os.environ.get('userid')
     container_id = os.environ.get('container')
+    logger.debug('user_id:%s , container_id:%s' % (user_id, container_id))
 
     return user_id, container_id
 
 
-@async_call
 def read_tty(host, user_id, container_id, ser):
     global is_rece
     topic = '{user_id}/{container_id}/serial/down'.format(user_id=user_id, container_id=container_id)
