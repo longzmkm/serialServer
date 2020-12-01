@@ -7,6 +7,7 @@ import threading
 import paho.mqtt.client as mqtt
 import paho.mqtt.subscribe as subscribe
 import logging
+import binascii
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
                     datefmt='%a, %d %b %Y %H:%M:%S')
@@ -29,7 +30,7 @@ def generate_number():
 def Vpsend(ser, message):
     try:
         is_rece = False
-        ser.write(bytes(message, 'utf-8'))
+        ser.write(bytearray.fromhex(message))
         logger.debug("send the data:%s" % message)
         time.sleep(1)
         is_rece = True
@@ -41,7 +42,7 @@ def Vpsend(ser, message):
 
 
 def mqtt_to_serial(client, userdata, message):
-    msg = str(message.payload, encoding='utf-8')
+    msg = message.payload.decode('utf8')
     Vpsend(userdata, msg)
 
 
@@ -72,11 +73,11 @@ def get_evn():
 
 @async_call
 def read_tty(ser, client, user_id, container_id):
-    topic = "{user_id}/{container_id}/aaaaa/down".format(user_id=user_id, container_id=container_id)
+    topic = '{user_id}/{container_id}/+/down'.format(user_id=user_id, container_id=container_id)
 
     while True:
         if is_rece and ser.in_waiting != 0:
-            msg_recv = ser.read(ser.in_waiting)
+            msg_recv = binascii.hexlify(ser.read(ser.in_waiting)).decode('utf-8')
             logger.debug('recv the data:%s' % msg_recv)
             client.publish(topic=topic, payload=msg_recv, qos=1)
             logger.debug('send data to mqtt topic:%s , payload:%s' % (topic, msg_recv))
