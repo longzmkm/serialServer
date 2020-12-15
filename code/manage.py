@@ -49,7 +49,7 @@ def mqtt_to_serial(client, userdata, message):
 
 @async_call
 def receive_mqtt(host, user_id, container_id, ser):
-    topic = "{user_id}/{container_id}/+/up".format(user_id=user_id, container_id=container_id)
+    topic = "{user_id}/{container_id}/modbusRtu/up".format(user_id=user_id, container_id=container_id)
     logger.debug(topic)
     subscribe.callback(mqtt_to_serial,
                        topic,
@@ -75,7 +75,7 @@ def get_evn():
 
 def read_tty(host, user_id, container_id, ser):
     global is_rece
-    topic = '{user_id}/{container_id}/serial/down'.format(user_id=user_id, container_id=container_id)
+    topic = '{user_id}/{container_id}/modbusRtu/down'.format(user_id=user_id, container_id=container_id)
 
     while True:
         if is_rece and ser.in_waiting != 0:
