@@ -6,5 +6,4 @@ WORKDIR /code
 RUN pip install --no-cache-dir -r  requirements.txt
 
 ADD . .
-RUN pwd
 CMD ["python","./code/manage.py"]
