@@ -48,8 +48,9 @@ def mqtt_to_serial(client, userdata, message):
 
 
 @async_call
-def receive_mqtt(host, user_id, container_id, ser):
-    topic = "{user_id}/{container_id}/modbusRtu/up".format(user_id=user_id, container_id=container_id)
+def receive_mqtt(host, user_id, ser):
+    # def receive_mqtt(host, user_id, container_id, ser):
+    topic = "{user_id}/modbusRtu/up".format(user_id=user_id)
     logger.debug(topic)
     subscribe.callback(mqtt_to_serial,
                        topic,
@@ -67,15 +68,19 @@ def create_serial_client(device, rate):
 def get_evn():
     # 获取 环境变量数据
     user_id = os.environ.get('userid')
-    container_id = os.environ.get('container')
-    logger.debug('user_id:%s , container_id:%s' % (user_id, container_id))
+    # container_id = os.environ.get('container')
+    # logger.debug('user_id:%s , container_id:%s' % (user_id, container_id))
+    logger.debug('user_id:%s' % user_id)
 
-    return user_id, container_id
+    # return user_id, container_id
+    return user_id
 
 
-def read_tty(host, user_id, container_id, ser):
+def read_tty(host, user_id, ser):
+    # def read_tty(host, user_id, container_id, ser):
     global is_rece
-    topic = '{user_id}/{container_id}/modbusRtu/down'.format(user_id=user_id, container_id=container_id)
+    topic = '{user_id}/modbusRtu/down'.format(user_id=user_id)
+    # topic = '{user_id}/{container_id}/modbusRtu/down'.format(user_id=user_id, container_id=container_id)
 
     while True:
         if is_rece and ser.in_waiting != 0:
@@ -97,15 +102,19 @@ if __name__ == '__main__':
 
     # 1. 获取环境变量  组成topic
     logger.debug('1.组成topic')
-    user_id, container_id = get_evn()
-    logger.debug(u'当前USE_ID:%s, 容器ID:%s' % (user_id, container_id))
+    user_id = get_evn()
+    # user_id, container_id = get_evn()
+    # logger.debug(u'当前USE_ID:%s, 容器ID:%s' % (user_id, container_id))
+    logger.debug(u'当前USE_ID:%s' % user_id)
     # 2. 创建串口的 master 和 slave
     logger.debug('2.创建串口的连接')
     ser = create_serial_client(device, rate)
 
     # 3. 订阅数据  通过串口的形式 转发出去
     logger.debug('3. 订阅数据  通过串口的形式 转发出去')
-    receive_mqtt(host, user_id, container_id, ser)
+    receive_mqtt(host, user_id, ser)
+    # receive_mqtt(host, user_id, container_id, ser)
 
     # 4. 接收串口发送的数据 写入 topic
-    read_tty(host, user_id, container_id, ser)
+    read_tty(host, user_id, ser)
+    # read_tty(host, user_id, container_id, ser)
