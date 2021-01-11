@@ -83,6 +83,7 @@ def read_tty(host, user_id, ser):
     # topic = '{user_id}/{container_id}/modbusRtu/down'.format(user_id=user_id, container_id=container_id)
 
     while True:
+        time.sleep(100)
         if is_rece and ser.in_waiting != 0:
             msg_recv = binascii.hexlify(ser.read(ser.in_waiting)).decode('utf-8')
             logger.debug('recv the data:%s' % msg_recv)
