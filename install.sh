@@ -5,7 +5,7 @@ killall -9 socat
 echo '2.映射串口/dev/ttyS11'
 rm -rf /dev/ttyS10
 rm -rf /dev/ttyS11
-socat PTY,link=/dev/ttyS10 PTY,link=/dev/ttyS11 &
+sudo socat PTY,link=/dev/ttyS10 PTY,link=/dev/ttyS11 &
 
 echo '3.获取镜像'
 
