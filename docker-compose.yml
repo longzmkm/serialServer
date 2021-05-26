@@ -1,6 +1,14 @@
 version: '3'
 services:
   code:
+    image: "tlqjxd/serial:1.3"
+    container_name: serial
     volumes:
       - /dev/ttyS10:/dev/ttyS10
-    build: .
+    environment:
+      - userid: "${userid}"
+  redis:
+    image: "redis:alpine"
+    container_name: serial-redis
+    ports:
+       - "36379:6379"

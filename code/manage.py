@@ -8,14 +8,16 @@ import paho.mqtt.client as mqtt
 import paho.mqtt.subscribe as subscribe
 import logging
 import binascii
-from datetime import datetime
+from redis import ConnectionPool, Redis
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s.%(msecs)03d %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
-                    datefmt='%Y-%m-%d,%H:%M:%S')
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
+                    datefmt='%a, %d %b %Y %H:%M:%S')
 logger = logging.getLogger(__name__)
 
 is_rece = True
+
+pool = ConnectionPool(host="serial-redis", port=6379, decode_responses=True)
+redis_client = Redis(connection_pool=pool)
 
 
 def async_call(fn):
@@ -37,7 +39,7 @@ def Vpsend(ser, message):
             ser.read(ser.in_waiting)
             logger.debug("clean buffer")
         ser.write(bytearray.fromhex(message))
-        logger.debug("send to host:%s" % message)
+        # logger.debug("send to host:%s" % message)
         time.sleep(0.006)
         is_rece = True
 
@@ -49,6 +51,8 @@ def Vpsend(ser, message):
 
 def mqtt_to_serial(client, userdata, message):
     msg = message.payload.decode('utf8')
+    logger.debug("cmd:%s , result:%s" % (message.topic.split('/')[-1], msg))
+    redis_client.set(message.topic.split('/')[-1], msg, 6)
     Vpsend(userdata, msg)
 
 
